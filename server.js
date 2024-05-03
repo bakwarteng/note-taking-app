@@ -29,15 +29,25 @@ app.post("/api/notes", (req, res) => {
   const { title, text } = req.body;
   if (title && text) {
     // Variable for the object we will save
-    const newNote = {
-      title,
-      text,
-    };
-    newNote.id = uuid();
-    notes.push(newNote);
+    req.body.id = Math.floor(Math.random() * 10000);
+    console.log(req.body.id);
+
+    notes.push(req.body);
     fs.writeFileSync("./db/db.json", JSON.stringify(notes));
     res.json(notes);
   }
+});
+
+app.delete("/api/notes/:id", (req, res) => {
+  for (let index = 0; index < notes.length; index++) {
+    if (notes[index].id == req.params.id) {
+      notes.splice(index, 1);
+      console.log(notes[index].id);
+      console.log(req.params.id);
+    }
+  }
+  fs.writeFileSync("./db/db.json", JSON.stringify(notes));
+  res.json(notes);
 });
 
 app.listen(PORT, () =>
